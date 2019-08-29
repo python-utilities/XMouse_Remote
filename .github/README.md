@@ -75,6 +75,12 @@ Suggested additions for your _`ReadMe.md`_ file so everyone has a good time with
 
 
 ```MarkDown
+Install dependencies
+
+
+    pip3 install --user Xlib
+
+
 Clone with the following to avoid incomplete downloads
 
 
@@ -95,7 +101,7 @@ Update/upgrade submodules via
 
 
 ```Python
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 
 from lib.modules.xmouse_remote import XMouse_Remote

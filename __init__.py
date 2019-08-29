@@ -50,9 +50,9 @@ class XMouse_Remote(object):
         self.button_ids = button_ids
         if self.button_ids is None:
             self.button_ids = {
-                'button_left': 0,
-                'button_right': 1,
+                'button_left': 1,
                 'button_middle': 2,
+                'button_right': 3,
                 'scroll_up': 4,
                 'scroll_down': 5,
                 'scroll_left': 6,
@@ -62,11 +62,10 @@ class XMouse_Remote(object):
         ## Used to prevent overwriting variables outside of class
         self._screen_width = self.display.screen().width_in_pixels
         self._screen_height = self.display.screen().height_in_pixels
-        self._old_location = self.location
         self._new_location = self.location
         self._target_id = 1
-        self._x = self._old_location[0]
-        self._y = self._old_location[1]
+        self._x = self._new_location[0]
+        self._y = self._new_location[1]
         self._coordinates = None
 
     @property
@@ -165,19 +164,15 @@ class XMouse_Remote(object):
         """
         Returns `self.location` after moving relative distance from last coordinates
         """
-        self._old_location = self.location
-        self._new_location = self._old_location
+        self._new_location = self.location
 
         if x != 0:
-            self._new_location[0] = self._old_location[0] + x
+            self._new_location[0] = self._new_location[0] + x
 
         if y != 0:
-            self._new_location[1] = self._old_location[1] + y
+            self._new_location[1] = self._new_location[1] + y
 
-        if self._new_location != self._old_location:
-            return self.move_absolute(*self._new_location, sync = sync)
-
-        return self.location
+        return self.move_absolute(*self._new_location, sync = sync)
 
     def scroll(self, x = 0, y = 0):
         """
