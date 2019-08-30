@@ -100,6 +100,9 @@ Update/upgrade submodules via
   "&#x1F40D; How to make use of this submodule within another project"
 
 
+**As an `import`**
+
+
 ```Python
 #!/usr/bin/env python3
 
@@ -107,10 +110,94 @@ Update/upgrade submodules via
 from lib.modules.xmouse_remote import XMouse_Remote
 
 
-mouse = XMouse_Remote(display = ':0')
+mouse = XMouse_Remote(display = ':0', button_ids = {
+    'button_left': 1,
+    'button_middle': 2,
+    'button_right': 3,
+    'scroll_up': 4,
+    'scroll_down': 5,
+    'scroll_left': 6,
+    'scroll_right': 7
+})
 
+
+mouse.move_relative(x = 5)
 print("XMouse_Remote location -> {}".format(mouse.location))
-mouse.move_absolute(x = 5, y = 5)
+
+mouse.drag_relative(y=-55)
+print("XMouse_Remote location -> {}".format(mouse.location))
+```
+
+
+**As a base `class`**
+
+
+```Python
+#!/usr/bin/env python3
+
+
+import time
+
+from lib.modules.xmouse_remote import XMouse_Remote
+
+
+class XMouse_Custom_Remote(XMouse_Remote):
+    """
+    XMouse_Custom_Remote extends XMouse_Remote with multi button support
+    """
+
+    def __init__(self, display = None, button_ids = None):
+        super(XMouse_Custom_Remote, self).__init__(display = display, button_ids = button_ids)
+        self._target_ids = [1]
+
+    def multi_button_press(self, ids = [1], names = None, sync = True):
+        """
+        Press list of button IDs or names
+
+        - `ids` list of button IDs to press
+        - `names` list of button names to press
+        """
+        self._target_ids = ids
+        if names is not None:
+            self._target_ids = [self.button_ids.get(button_name, 1) for button_name in names]
+
+        for _target_id in self._target_ids:
+            self.button_press(detail = _target_id, sync = sync)
+
+    def multi_button_release(self, ids = [1], names = None, sync = True):
+        """
+        Releases list of button IDs or names
+
+        - `ids` list of button IDs to release
+        - `names` list of button names to release
+        """
+        self._target_ids = ids
+        if names is not None:
+            self._target_ids = [self.button_ids.get(button_name, 1) for button_name in names]
+
+        for _target_id in self._target_ids:
+            self.button_release(detail = _target_id, sync = sync)
+
+    def multi_drag_relative(self, x = 0, y = 0, ids = [1], names = None, sync = True, delays = {0: 0.01, 1: 0.01}):
+        """
+        Starting at `self.location`, moves to relative coordinates while pressing defined button IDs or names
+
+        - `ids` list of button IDs to press while moving
+        - `names` list of button names to press while moving
+        """
+        self.multi_button_press(ids = ids, names = names, sync = sync)
+
+        if delays.get(0, 0) > 0:
+            time.sleep(delays[0])
+
+        self.move_relative(x = x, y = y, sync = sync)
+
+        if delays.get(1, 0) > 0:
+            time.sleep(delays[1])
+
+        self.multi_button_release(ids = ids, names = names, sync = sync)
+
+        return self.location
 ```
 
 
