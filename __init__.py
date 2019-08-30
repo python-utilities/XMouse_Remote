@@ -35,36 +35,40 @@ class XMouse_Remote(object):
 
     ## Example usage
 
-        mouse = XMouse_Remote(display = ':0', button_ids = {
-            'button_left': 1,
-            'button_middle': 2,
-            'button_right': 3,
-            'scroll_up': 4,
-            'scroll_down': 5,
-            'scroll_left': 6,
-            'scroll_right': 7
-        })
-
-        print("XMouse_Remote location -> {}".format(mouse.location))
-        mouse.move_relative(x = 5)
+        mouse = XMouse_Remote()
         print("XMouse_Remote location -> {}".format(mouse.location))
 
-    > Note for script writers, most of the logics are in the following methods
-
-    - `button_press`
-    - `button_release`
-    - `move_absolute`
-    - `scroll`
+        mouse.move_relative(x = 5, button_name = 'button_left')
+        print("XMouse_Remote location -> {}".format(mouse.location))
     """
 
     def __init__(self, display = None, button_ids = None):
         """
         See -- http://python-xlib.sourceforge.net/doc/html/python-xlib_16.html#SEC15
+
+        - `display`, string of X display address eg. `":0"`
+        - `button_ids`, dictionary of key name to detail ID mapping
+
+        ## Example
+
+            mouse = XMouse_Remote(display = ':0', button_ids = {
+                'button_left': 1,
+                'button_middle': 2,
+                'button_right': 3,
+                'scroll_up': 4,
+                'scroll_down': 5,
+                'scroll_left': 6,
+                'scroll_right': 7
+            })
+
+            print("XMouse_Remote location -> {}".format(mouse.location))
+            mouse.drag_relative(y = 5, button_name = 'button_left')
+            print("XMouse_Remote location -> {}".format(mouse.location))
         """
         self.display = Display(display)
 
         self.button_ids = button_ids
-        if self.button_ids is None:
+        if type(self.button_ids) is not dict:
             self.button_ids = {
                 'button_left': 1,
                 'button_middle': 2,
@@ -75,26 +79,32 @@ class XMouse_Remote(object):
                 'scroll_right': 7
             }
 
-        ## Used to prevent overwriting variables outside of class
-        self._screen_width = self.display.screen().width_in_pixels
-        self._screen_height = self.display.screen().height_in_pixels
-        self._new_location = self.location
-        self._target_id = 1
-        self._x = self._new_location[0]
-        self._y = self._new_location[1]
-        self._coordinates = None
+        ## For future or super features
+        self.relative_constraints = {
+            'min_x': -25,
+            'max_x': 25,
+            'min_y': -25,
+            'max_y': 25
+        }
+        ## Zero and positive integers on most displays
+        self.absolute_constraints = {
+            'min_x': 0,
+            'max_x': self.display.screen().width_in_pixels,
+            'min_y': 0,
+            'max_y': self.display.screen().height_in_pixels
+        }
 
     @property
     def location(self):
         """
         Returns `[x, y]` list of coordinates that mouse cursor occupies
         """
-        self._coordinates = self.display.screen().root.query_pointer()._data
-        return [self._coordinates.get('root_x'), self._coordinates.get('root_y')]
+        _coordinates = self.display.screen().root.query_pointer()._data
+        return [_coordinates.get('root_x'), _coordinates.get('root_y')]
 
     def button_click(self, detail = 1, button_name = None, times = 1, sync = True, delays = {0: 0.01}):
         """
-        Calls `self.button_press(...)` and `self.button_release(...)`
+        Calls `self.button_press(...)` then `self.button_release(...)` a number of `times`
         """
         for _ in range(times):
             self.button_press(detail = detail, button_name = button_name, sync = sync)
@@ -106,7 +116,7 @@ class XMouse_Remote(object):
 
     def drag_absolute(self, x, y, detail = 1, button_name = None, sync = True, delays = {0: 0.01, 1: 0.01}):
         """
-        Starting from `self.location`, moves to absolute coordinates while pressing defined button IDs
+        Starting at `self.location`, moves to absolute coordinates while pressing defined button ID or name
         """
         self.button_press(detail = detail, button_name = button_name, sync = sync)
 
@@ -118,13 +128,13 @@ class XMouse_Remote(object):
         if delays.get(1, 0) > 0:
             time.sleep(delays[1])
 
-        self.button_release(detail = self._target_id, sync = sync)
+        self.button_release(detail = _target_id, sync = sync)
 
         return self.location
 
     def drag_relative(self, x = 0, y = 0, detail = 1, button_name = None, sync = True, delays = {0: 0.01, 1: 0.01}):
         """
-        Starting from `self.location`, moves to relative coordinates while pressing defined button IDs
+        Starting at `self.location`, moves to relative coordinates while pressing defined button ID or name
         """
         self.button_press(detail = detail, button_name = button_name, sync = sync)
 
@@ -142,22 +152,24 @@ class XMouse_Remote(object):
 
     def button_press(self, detail = 1, button_name = None, sync = True):
         """
+        Presses detailed button name
         """
-        self._target_id = detail
+        _target_id = detail
         if button_name is not None:
-            self._target_id = self.button_ids.get(button_name, 1)
+            _target_id = self.button_ids.get(button_name, 1)
 
-        fake_input(self.display, event_type = X.ButtonPress, detail = self._target_id)
+        fake_input(self.display, event_type = X.ButtonPress, detail = _target_id)
 
         if sync:
             self.display.sync()
 
     def button_release(self, detail = 1, button_name = None, sync = True):
         """
+        Releases detailed button name
         """
-        self._target_id = detail
+        _target_id = detail
         if button_name is not None:
-            self._target_id = self.button_ids.get(button_name, 1)
+            _target_id = self.button_ids.get(button_name, 1)
 
         fake_input(self.display, event_type = X.ButtonRelease, detail = detail)
 
@@ -170,8 +182,7 @@ class XMouse_Remote(object):
 
         See -- https://github.com/python-xlib/python-xlib/blob/master/Xlib/ext/xtest.py
         """
-        if (x, y) != self.location:
-            fake_input(self.display, event_type = X.MotionNotify, x = x, y = y)
+        fake_input(self.display, event_type = X.MotionNotify, x = x, y = y)
 
         if sync:
             self.display.sync()
@@ -185,15 +196,15 @@ class XMouse_Remote(object):
         - If positive moves cursor Up or Left
         - If negative moves cursor Down or Right
         """
-        self._new_location = self.location
+        _new_location = self.location
 
         if x != 0:
-            self._new_location[0] = self._new_location[0] + x
+            _new_location[0] = _new_location[0] + x
 
         if y != 0:
-            self._new_location[1] = self._new_location[1] + y
+            _new_location[1] = _new_location[1] + y
 
-        return self.move_absolute(*self._new_location, sync = sync)
+        return self.move_absolute(*_new_location, sync = sync)
 
     def scroll(self, x = 0, y = 0):
         """
