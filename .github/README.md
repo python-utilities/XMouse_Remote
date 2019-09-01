@@ -56,7 +56,7 @@ _module_relative_path="lib/modules/${_module_name}"
 ```Bash
 cd "<your-git-project-path>"
 
-git checkout masters
+git checkout master
 mkdir -vp "lib/modules"
 
 git submodule add\
