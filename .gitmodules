@@ -1,0 +1,4 @@
+[submodule "xmouse_remote"]
+	path = lib/modules/xmouse_remote
+	url = https://github.com/python-utilities/xmouse_remote.git
+	branch = master
