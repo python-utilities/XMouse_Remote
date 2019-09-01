@@ -114,6 +114,32 @@ class XMouse_Remote(object):
 
             self.button_release(detail = detail, button_name = button_name, sync = sync)
 
+    def button_press(self, detail = 1, button_name = None, sync = True):
+        """
+        Presses detailed button name
+        """
+        _target_id = detail
+        if button_name is not None:
+            _target_id = self.button_ids.get(button_name, 1)
+
+        fake_input(self.display, event_type = X.ButtonPress, detail = _target_id)
+
+        if sync:
+            self.display.sync()
+
+    def button_release(self, detail = 1, button_name = None, sync = True):
+        """
+        Releases detailed button name
+        """
+        _target_id = detail
+        if button_name is not None:
+            _target_id = self.button_ids.get(button_name, 1)
+
+        fake_input(self.display, event_type = X.ButtonRelease, detail = detail)
+
+        if sync:
+            self.display.sync()
+
     def drag_absolute(self, x, y, detail = 1, button_name = None, sync = True, delays = {0: 0.01, 1: 0.01}):
         """
         Starting at `self.location`, moves to absolute coordinates while pressing defined button ID or name
@@ -149,32 +175,6 @@ class XMouse_Remote(object):
         self.button_release(detail = detail, button_name = button_name, sync = sync)
 
         return self.location
-
-    def button_press(self, detail = 1, button_name = None, sync = True):
-        """
-        Presses detailed button name
-        """
-        _target_id = detail
-        if button_name is not None:
-            _target_id = self.button_ids.get(button_name, 1)
-
-        fake_input(self.display, event_type = X.ButtonPress, detail = _target_id)
-
-        if sync:
-            self.display.sync()
-
-    def button_release(self, detail = 1, button_name = None, sync = True):
-        """
-        Releases detailed button name
-        """
-        _target_id = detail
-        if button_name is not None:
-            _target_id = self.button_ids.get(button_name, 1)
-
-        fake_input(self.display, event_type = X.ButtonRelease, detail = detail)
-
-        if sync:
-            self.display.sync()
 
     def move_absolute(self, x, y, sync = True):
         """
