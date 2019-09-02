@@ -75,7 +75,7 @@ Suggested additions for your _`ReadMe.md`_ file so everyone has a good time with
 
 
 ```MarkDown
-Install dependencies
+Install Python dependencies
 
 
     pip3 install --user Xlib
