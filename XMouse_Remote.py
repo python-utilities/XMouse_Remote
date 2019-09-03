@@ -28,10 +28,11 @@ Order of arguments parsed
 0   --press-id or --press-name
 1   --delays[0]
 2   --move-absolute or --move-relative
-3   --delays[1]
-4   --click-id or --click-name
-5   --release-id or --release-name
-6   --location
+3   --scroll-x and or --scroll-y
+4   --delays[1]
+5   --click-id or --click-name
+6   --release-id or --release-name
+7   --location or --screen-size
 """.format(script_name = __script_name__)
 
 __epilog__ = """
@@ -118,6 +119,19 @@ arg_parser.add_argument('--release-name',
                         type = str,
                         default = None)
 
+arg_parser.add_argument('--screen-size',
+                        help = 'Prints width and height in pixels',
+                        action = 'store_true',
+                        default = False)
+
+arg_parser.add_argument('--scroll-x',
+                        help = 'Scrolls along X axis',
+                        type = int)
+
+arg_parser.add_argument('--scroll-y',
+                        help = 'Scrolls along Y axis',
+                        type = int)
+
 arg_parser.add_argument('--sync',
                         help = 'Wait for Xlib to think that things have synced',
                         action = 'store_true',
@@ -136,6 +150,9 @@ parsed_arguments = {
     'press_name': arg_parser.parse_known_args()[0].press_name,
     'release_id': arg_parser.parse_known_args()[0].release_id,
     'release_name': arg_parser.parse_known_args()[0].release_name,
+    'screen_size': arg_parser.parse_known_args()[0].screen_size,
+    'scroll_x': arg_parser.parse_known_args()[0].scroll_x,
+    'scroll_y': arg_parser.parse_known_args()[0].scroll_y,
     'sync': arg_parser.parse_known_args()[0].sync,
 }
 
@@ -151,10 +168,17 @@ elif parsed_arguments.get('press_name'):
 if parsed_arguments.get('delays', [0, 0])[0] > 0:
     time.sleep(parsed_arguments['delays'][0])
 
+
 if parsed_arguments.get('move_absolute') != []:
     mouse.move_absolute(*parsed_arguments['move_absolute'], sync = parsed_arguments['sync'])
 elif parsed_arguments.get('move_relative') != []:
     mouse.move_relative(*parsed_arguments['move_relative'], sync = parsed_arguments['sync'])
+
+if parsed_arguments.get('scroll_x'):
+    mouse.scroll(x = parsed_arguments['scroll_x'])
+if parsed_arguments.get('scroll_y'):
+    mouse.scroll(y = parsed_arguments['scroll_y'])
+
 
 if parsed_arguments.get('delays', [0, 0])[1] > 0:
     time.sleep(parsed_arguments['delays'][1])
@@ -176,5 +200,8 @@ elif parsed_arguments.get('release_name'):
     mouse.button_release(button_name = parsed_arguments['release_name'], sync = parsed_arguments['sync'])
 
 
-if parsed_arguments.get('location', False):
+if parsed_arguments.get('location'):
     print(" ".join(str(i) for i in mouse.location))
+elif parsed_arguments.get('screen_size'):
+    print("{x} {y}".format(x = mouse.display.screen().width_in_pixels,
+                           y = mouse.display.screen().height_in_pixels))
