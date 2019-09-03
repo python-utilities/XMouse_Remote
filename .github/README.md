@@ -141,6 +141,157 @@ mouse_relative_drag "1" "5" "5"
 ```
 
 
+**Or as a keyboard remapping `~/.config/openbox/lxde-pi-rc.xml`**
+
+
+```XML
+<?xml version="1.0"?>
+<openbox config>
+  <theme>
+    <font place="ActiveWindow">
+      <name>PibotoLt</name>
+      <size>18</size>
+      <weight>Normal</weight>
+      <slant>Normal</slant>
+    </font>
+
+    <font place="ActiveWindow">
+      <name>PibotoLt</name>
+      <size>18</size>
+      <weight>Normal</weight>
+      <slant>Normal</slant>
+    </font>
+
+    <invHandleWidth>20</invHandleWidth>
+    <titleColor>#4d98f5</titleColor>
+    <textColor>#ffffff</textColor>
+  </theme>
+
+
+  <!--
+    Above theme is from Raspberry Pi, other systems may appear different
+
+    Bellow maps number pad to XMouse_Remote actions based off "Num Lock" state
+  -->
+
+  <!-- Move cursor left and up -->
+  <keybind key="KP_7">
+    <action name="Execute">
+      <command>XMouse_Remote --move-relative -5 -5</command>
+    </action>
+  </keybind>
+
+  <!-- Move cursor up -->
+  <keybind key="KP_Up">
+    <action name="Execute">
+      <command>XMouse_Remote --move-relative 0 -5</command>
+    </action>
+  </keybind>
+
+  <!-- Move cursor right and up -->
+  <keybind key="KP_9">
+    <action name="Execute">
+      <command>XMouse_Remote --move-relative 5 -5</command>
+    </action>
+  </keybind>
+
+  <!-- Move cursor right -->
+  <keybind key="KP_Right">
+    <action name="Execute">
+      <command>XMouse_Remote --move-relative -5 0</command>
+    </action>
+  </keybind>
+
+  <!-- Move cursor right and down -->
+  <keybind key="KP_3">
+    <action name="Execute">
+      <command>XMouse_Remote --move-relative 5 5</command>
+    </action>
+  </keybind>
+
+  <!-- Move cursor down -->
+  <keybind key="KP_Down">
+    <action name="Execute">
+      <command>XMouse_Remote --move-relative 0 5</command>
+    </action>
+  </keybind>
+
+  <!-- Move cursor left and down -->
+  <keybind key="KP_1">
+    <action name="Execute">
+      <command>XMouse_Remote --move-relative -5 5</command>
+    </action>
+  </keybind>
+
+  <!-- Move cursor left -->
+  <keybind key="KP_Left">
+    <action name="Execute">
+      <command>XMouse_Remote --move-relative -5 0</command>
+    </action>
+  </keybind>
+
+  <keybind key="KP_Begin">
+    <action name="Execute">
+      <command>
+        XMouse_Remote --move-absolute $(XMouse_Remote --screen-size awk '{print $1 / 2, $2 / 2}')
+      </command>
+    </action>
+  </keybind>
+
+  <!-- Left click on 0 when "Num Lock" is off -->
+  <keybind key="KP_Insert">
+    <action name="Execute">
+      <command>XMouse_Remote --click-id 1</command>
+    </action>
+  </keybind>
+
+  <!-- Right click on enter -->
+  <keybind key="KP_Enter">
+    <action name="Execute">
+      <command>XMouse_Remote --click-id 2</command>
+    </action>
+  </keybind>
+
+  <!-- Middle click on decimal point -->
+  <keybind key="KP_Delete">
+    <action name="Execute">
+      <command>XMouse_Remote --click-id 3</command>
+    </action>
+  </keybind>
+
+  <!-- Scroll left and right on 4 and 6 -->
+  <keybind key="4">
+    <action name="Execute">
+      <command>XMouse_Remote --scroll-x 3</command>
+    </action>
+  </keybind>
+
+  <keybind key="6">
+    <action name="Execute">
+      <command>XMouse_Remote --scroll-x -3</command>
+    </action>
+  </keybind>
+
+  <!-- Scroll up and down on 8 and 2 -->
+  <keybind key="8">
+    <action name="Execute">
+      <command>XMouse_Remote --scroll-y 3</command>
+    </action>
+  </keybind>
+
+  <keybind key="2">
+    <action name="Execute">
+      <command>XMouse_Remote --scroll-y -3</command>
+    </action>
+  </keybind>
+
+</openbox>
+```
+
+
+> Issue `openbox --reconfigure` to reload configurations or reboot the device for changes to take effect.
+
+
 **:tada: Excellent :tada:** your project is now ready to begin unitizing code from this repository!
 
 
