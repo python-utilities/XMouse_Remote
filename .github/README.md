@@ -304,7 +304,7 @@ ___
   "&#x1F5D2; Additional resources and things to keep in mind when developing"
 
 
-There maybe bugs or missing features, Pull Requests are welcome.
+Drag support via keyboard may be _tricky_ via command-line, though with Python and `evdev` it should be possible to read and redirect key-down and key-up events. There maybe bugs or missing features, Pull Requests are welcome.
 
 ___
 
