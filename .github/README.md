@@ -238,7 +238,7 @@ ___
   "&#x1F5D2; Additional resources and things to keep in mind when developing"
 
 
-There maybe bugs or missing features, Pull Requests are welcome.
+Check out the [`gh-pages`][xmouse_remote__gh_pages] branch for command-line examples and further documentation. Pull Requests are welcome for fixing bugs and/or adding features.
 
 ___
 
@@ -320,3 +320,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 [xmouse_remote__master__source_code]:
   https://github.com/python-utilities/xmouse_remote/blob/master/__init__.py
   "&#x2328; Project source, one Python file of importable code!"
+
+
+[xmouse_remote__gh_pages]:
+  https://github.com/python-utilities/xmouse_remote/tree/gh-pages
+  "Source code examples hosted thanks to GitHub Pages!"
