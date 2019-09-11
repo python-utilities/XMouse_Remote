@@ -27,6 +27,8 @@ Python2/3 mouse wrapper API of `Xlib`
 
 - [&#x1F5D2; Notes][heading__notes]
 
+- [:card_index: Attribution][heading__attribution]
+
 - [&#x2696; License][heading__license]
 
 
@@ -239,6 +241,18 @@ ___
 
 
 Check out the [`gh-pages`][xmouse_remote__gh_pages] branch for command-line examples and further documentation. Pull Requests are welcome for fixing bugs and/or adding features.
+
+
+___
+
+
+## Attribution
+[heading__attribution]:
+  #attribution
+  "&#x1F4C7; Resources that where helpful in building this project so far."
+
+
+- [GitHub -- Remote MC Control](https://github.com/TimSmith714/Remote-MC-Control)
 
 ___
 
